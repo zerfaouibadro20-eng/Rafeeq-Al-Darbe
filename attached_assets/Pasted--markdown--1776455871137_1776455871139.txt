@@ -1,0 +1,366 @@
+
+برومت منفصل لإضافة القرآن والأحاديث والأصوات والأحكام بالتفصيل
+markdown
+# برومت إضافة البيانات المفقودة إلى تطبيق "رفيق الدرب"
+
+## 🎯 المطلوب: إضافة المحتوى التالي الذي لا يوجد حالياً في التطبيق
+
+---
+
+## ⚠️ ملاحظة: هذا البرومت مخصص للإضافة فقط، التطبيق الأساسي موجود بالفعل
+
+---
+
+## 📖 أولاً: إضافة القرآن الكريم كاملاً (رواية حفص ورواية ورش)
+
+### المشكلة الحالية:
+- لا توجد آيات قرآنية في التطبيق
+- فقط عناوين السور موجودة
+
+### الحل:
+أضف الكود التالي في `LoadingScreen.jsx` لجلب القرآن من API وتخزينه محلياً:
+
+```javascript
+// إضافة هذه الدوال في LoadingScreen.jsx
+
+const loadQuranData = async (recitation, apiUrl, storageKey) => {
+  try {
+    const response = await fetch(apiUrl);
+    let data = await response.json();
+    
+    // التأكد من صحة البيانات
+    if (data && !Array.isArray(data) && data.data) {
+      data = data.data;
+    }
+    
+    if (Array.isArray(data) && data.length === 114) {
+      // تأكد من وجود الآيات
+      const hasVerses = data[0]?.verses && data[0].verses.length > 0;
+      if (hasVerses) {
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        console.log(`✅ تم تحميل ${recitation} بنجاح - 114 سورة`);
+        return true;
+      }
+    }
+    throw new Error('بيانات غير صالحة');
+  } catch (error) {
+    console.error(`❌ فشل تحميل ${recitation}:`, error);
+    return false;
+  }
+};
+
+// داخل دالة loadAllData():
+setStatus('جاري تحميل القرآن - رواية حفص...');
+await loadQuranData('حفص', 'https://raw.githubusercontent.com/risan/quran-json/main/data/quran.json', 'quran_hafs');
+setProgress(15);
+
+setStatus('جاري تحميل القرآن - رواية ورش...');
+await loadQuranData('ورش', 'https://raw.githubusercontent.com/risan/quran-json/main/data/quran-warsh.json', 'quran_warsh');
+setProgress(30);
+أيضاً أضف قائمة بأسماء السور العربية في ملف منفصل src/utils/surahNames.js:
+javascript
+export const ARABIC_SURAH_NAMES = [
+  "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
+  "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
+  "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
+  "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+  "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
+  "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
+  "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
+  "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
+  "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
+  "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
+  "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
+  "المسد", "الإخلاص", "الفلق", "الناس"
+];
+وفي QuranScreen.jsx، استخدم الأسماء العربية:
+javascript
+import { ARABIC_SURAH_NAMES } from '../utils/surahNames';
+
+const loadSurahs = () => {
+  const data = localStorage.getItem(`quran_${recitation}`);
+  if (data) {
+    let parsed = JSON.parse(data);
+    if (Array.isArray(parsed) && parsed.length === 114) {
+      // إضافة الأسماء العربية
+      parsed = parsed.map((surah, idx) => ({
+        ...surah,
+        name: ARABIC_SURAH_NAMES[idx] || surah.name
+      }));
+      setSurahs(parsed);
+    }
+  }
+};
+📚 ثانياً: إضافة الأحاديث (20 كتاباً)
+المشكلة الحالية:
+لا توجد أحاديث في التطبيق
+
+الحل:
+أضف الكود التالي في LoadingScreen.jsx:
+
+javascript
+const loadHadithBook = async (bookId, bookName) => {
+  try {
+    const response = await fetch(`https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/${bookId}.json`);
+    const data = await response.json();
+    localStorage.setItem(`hadith_${bookId}`, JSON.stringify(data));
+    console.log(`✅ تم تحميل ${bookName}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ فشل تحميل ${bookName}:`, error);
+    return false;
+  }
+};
+
+// داخل دالة loadAllData() بعد تحميل القرآن:
+const hadithBooks = [
+  { id: 'bukhari', name: 'صحيح البخاري' },
+  { id: 'muslim', name: 'صحيح مسلم' },
+  { id: 'tirmidhi', name: 'سنن الترمذي' },
+  { id: 'abudawud', name: 'سنن أبي داود' },
+  { id: 'nasai', name: 'سنن النسائي' },
+  { id: 'ibnmajah', name: 'سنن ابن ماجه' },
+  { id: 'malik', name: 'موطأ مالك' },
+  { id: 'ahmad', name: 'مسند أحمد' },
+  { id: 'darimi', name: 'سنن الدارمي' },
+  { id: 'ibnhban', name: 'صحيح ابن حبان' },
+  { id: 'ibnhuzaimah', name: 'صحيح ابن خزيمة' },
+  { id: 'hakim', name: 'المستدرك على الصحيحين' },
+  { id: 'nawawi', name: 'الأربعون النووية' },
+  { id: 'riyadh', name: 'رياض الصالحين' },
+  { id: 'mishkat', name: 'مشكاة المصابيح' },
+  { id: 'bulugh', name: 'بلوغ المرام' },
+  { id: 'umdah', name: 'عمدة الأحكام' },
+  { id: 'saeed', name: 'سنن سعيد بن منصور' },
+  { id: 'abdulrazzaq', name: 'مصنف عبد الرزاق' },
+  { id: 'ibnabishaybah', name: 'مصنف ابن أبي شيبة' }
+];
+
+for (let i = 0; i < hadithBooks.length; i++) {
+  const book = hadithBooks[i];
+  setStatus(`جاري تحميل ${book.name} (${i+1}/${hadithBooks.length})...`);
+  await loadHadithBook(book.id, book.name);
+  setProgress(30 + ((i+1) / hadithBooks.length) * 50);
+}
+وفي HadithScreen.jsx، أصلح دالة loadBook لمعالجة صيغ JSON المختلفة:
+javascript
+const loadBook = async (bookId, bookName) => {
+  setLoading(true);
+  setError(null);
+  try {
+    let data = localStorage.getItem(`hadith_${bookId}`);
+    if (!data) {
+      const response = await fetch(`https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/${bookId}.json`);
+      data = await response.json();
+      localStorage.setItem(`hadith_${bookId}`, JSON.stringify(data));
+    } else {
+      data = JSON.parse(data);
+    }
+    
+    // استخراج الأحاديث من الصيغ المختلفة
+    let hadithsList = [];
+    if (data.hadiths && Array.isArray(data.hadiths)) {
+      hadithsList = data.hadiths;
+    } else if (Array.isArray(data)) {
+      hadithsList = data;
+    } else if (data.data && Array.isArray(data.data)) {
+      hadithsList = data.data;
+    }
+    
+    if (hadithsList.length > 0) {
+      setHadiths(hadithsList);
+      setSelectedBook(bookName);
+    } else {
+      setError(`لا توجد أحاديث في ${bookName} حالياً`);
+      setHadiths([]);
+    }
+  } catch (error) {
+    setError(`فشل تحميل ${bookName}. تأكد من الاتصال بالإنترنت.`);
+    setHadiths([]);
+  }
+  setLoading(false);
+};
+🎵 ثالثاً: إضافة الأصوات (الأذان والتنبيهات) باستخدام TTS
+المشكلة الحالية:
+لا توجد أصوات أذان ولا تنبيهات
+
+روابط MP3 قد تسبب مشاكل CORS
+
+الحل:
+استخدم SpeechSynthesis (TTS) بدلاً من MP3:
+
+javascript
+// في PrayerScreen.jsx
+const playAdhan = () => {
+  if (!adhanEnabled) return;
+  const adhanText = "الله أكبر الله أكبر، أشهد أن لا إله إلا الله، أشهد أن محمداً رسول الله، حي على الصلاة، حي على الفلاح، الله أكبر الله أكبر، لا إله إلا الله";
+  const utterance = new SpeechSynthesisUtterance(adhanText);
+  utterance.lang = 'ar-SA';
+  utterance.rate = 0.9;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+};
+
+// في TajweedScreen.jsx (صوت التنبيه عند الخطأ)
+const playBeep = () => {
+  const beepSound = new Audio();
+  // لا يمكن تحميل MP3 خارجي بسبب CORS، استخدم TTS بدلاً منه
+  const utterance = new SpeechSynthesisUtterance("تنبيه");
+  utterance.lang = 'ar-SA';
+  window.speechSynthesis.speak(utterance);
+};
+⚖️ رابعاً: تفصيل الأحكام الشرعية (8 أبواب كاملة)
+المشكلة الحالية:
+الأحكام سطحية (عناوين فقط بدون تفاصيل)
+
+الحل:
+استبدل محتوى RulingsScreen.jsx بالبيانات المفصلة التالية:
+
+javascript
+// src/data/rulingsData.js
+export const rulingsData = [
+  {
+    id: 1,
+    name: "🧼 الطهارة",
+    icon: "🧼",
+    details: [
+      "الوضوء: 4 فرائض (غسل الوجه، غسل اليدين إلى المرفقين، مسح الرأس، غسل الرجلين)",
+      "الوضوء: 4 سنن (التسمية، المضمضة والاستنشاق، تخليل الأصابع، التيامن)",
+      "الوضوء: 4 نواقض (الخارج من السبيلين، زوال العقل، مس الذكر، أكل لحم الإبل)",
+      "الغسل: 4 أسباب (الجنابة، الحيض، النفاس، الإسلام)",
+      "الغسل: 2 فرائض (النية، تعميم البدن بالماء)",
+      "الغسل: 4 سنن (غسل اليدين، غسل الفرج، الوضوء، تخليل الشعر)",
+      "التيمم: 3 أسباب (عدم وجود الماء، المرض، البرد الشديد)",
+      "التيمم: كيفيته (نية، ضربة للوجه، ضربة للكفين)",
+      "الدليل: 'فَتَيَمَّمُوا صَعِيدًا طَيِّبًا فَامْسَحُوا بِوُجُوهِكُمْ وَأَيْدِيكُمْ' (المائدة: 6)"
+    ]
+  },
+  {
+    id: 2,
+    name: "🕌 الصلاة",
+    icon: "🕌",
+    details: [
+      "شروط الصلاة (7): الإسلام، العقل، التمييز، دخول الوقت، ستر العورة، طهارة البدن والثوب والمكان، استقبال القبلة",
+      "أركان الصلاة (12): القيام، تكبيرة الإحرام، قراءة الفاتحة، الركوع، الرفع من الركوع، السجود، الرفع من السجود، الجلوس بين السجدتين، الطمأنينة، التشهد الأخير، الصلاة على النبي، التسليم",
+      "سنن الصلاة (6): رفع اليدين، وضع اليمين على الشمال، دعاء الاستفتاح، التعوذ، الجهر بالقراءة، التسبيح في الركوع والسجود",
+      "مبطلات الصلاة (7): الكلام العمد، الضحك، الأكل والشرب، كثرة الحركة، انكشاف العورة، الحدث، الالتفات",
+      "الدليل: 'وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ' (البقرة: 43)"
+    ]
+  },
+  {
+    id: 3,
+    name: "💰 الزكاة",
+    icon: "💰",
+    details: [
+      "نصاب الذهب: 85 غراماً (2.5%)",
+      "نصاب الفضة: 595 غراماً (2.5%)",
+      "نصاب النقود: ما يعادل نصاب الفضة (2.5%)",
+      "نصاب الزروع والثمار: 5 أوسق (612 كغم) - 10% إن سقيت بلا كلفة، 5% إن سقيت بكلفة",
+      "نصاب الإبل: 5 ذود، نصاب البقر: 30 بقرة، نصاب الغنم: 40 شاة",
+      "المستحقون (8 أصناف): الفقراء، المساكين، العاملون عليها، المؤلفة قلوبهم، الرقاب، الغارمون، في سبيل الله، ابن السبيل",
+      "الدليل: 'إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ...' (التوبة: 60)"
+    ]
+  },
+  {
+    id: 4,
+    name: "🌙 الصيام",
+    icon: "🌙",
+    details: [
+      "أركان الصيام: النية، الإمساك عن المفطرات",
+      "مفطرات الصيام (7): الأكل والشرب، الجماع، الاستقاءة، إنزال المني، الحجامة، الحيض والنفاس، حقن الدم",
+      "الكفارة مرتبة: عتق رقبة، فإن لم يستطع فصيام شهرين متتابعين، فإن لم يستطع فإطعام 60 مسكيناً",
+      "مكروهات الصيام (4): القبلة بشهوة، المبالغة في المضمضة، ذوق الطعام، مضغ العلك",
+      "أعذار الإفطار (5): المرض، السفر، الحيض والنفاس، الحمل والرضاع، الجوع والعطش الشديدان",
+      "الدليل: 'فَمَنْ كَانَ مِنْكُمْ مَرِيضًا أَوْ عَلَى سَفَرٍ فَعِدَّةٌ مِنْ أَيَّامٍ أُخَرَ' (البقرة: 184)"
+    ]
+  },
+  {
+    id: 5,
+    name: "🕋 الحج والعمرة",
+    icon: "🕋",
+    details: [
+      "أركان الحج (4): الإحرام، الوقوف بعرفة، طواف الإفاضة، السعي",
+      "واجبات الحج (5): الإحرام من الميقات، المبيت بمزدلفة، رمي الجمار، الحلق أو التقصير، طواف الوداع",
+      "محظورات الإحرام (6): إزالة الشعر، تقليم الأظفار، لبس المخيط للرجل، تغطية الرأس للرجل، الطيب، الصيد",
+      "مناسك العمرة (4): الإحرام، الطواف، السعي، الحلق أو التقصير",
+      "الدليل: 'وَلِلَّهِ عَلَى النَّاسِ حِجُّ الْبَيْتِ مَنِ اسْتَطَاعَ إِلَيْهِ سَبِيلًا' (آل عمران: 97)"
+    ]
+  },
+  {
+    id: 6,
+    name: "💍 الأسرة",
+    icon: "💍",
+    details: [
+      "شروط النكاح (5): الإيجاب والقبول، الولي، الشاهدان، المهر، خلو الموانع",
+      "أركان النكاح (5): الزوج، الزوجة، الولي، الشاهدان، الصيغة",
+      "أنواع الطلاق (4): طلاق سنة، طلاق بدعة، طلاق رجعي، طلاق بائن",
+      "العدة: المطلقة (3 قروء أو 3 أشهر)، المتوفى عنها زوجها (4 أشهر و10 أيام)، الحامل (وضع الحمل)",
+      "الدليل: 'الطَّلَاقُ مَرَّتَانِ فَإِمْسَاكٌ بِمَعْرُوفٍ أَوْ تَسْرِيحٌ بِإِحْسَانٍ' (البقرة: 229)"
+    ]
+  },
+  {
+    id: 7,
+    name: "🏪 البيوع",
+    icon: "🏪",
+    details: [
+      "شروط البيع: التراضي، أهلية المتعاقدين، كون المبيع موجوداً، معلومية الثمن والمثمن",
+      "أركان البيع: العاقد، المعقود عليه، الصيغة",
+      "أنواع البيوع: بيع مرابحة، بيع مساومة، بيع تقسيط، بيع سلم",
+      "البيوع المحرمة: بيع الخمر، بيع الميتة، بيع الأصنام، بيع الغرر",
+      "الربا نوعان: ربا الفضل (بيع جنس بجنس مع زيادة)، ربا النسيئة (تأخير البدلين)",
+      "الأصناف الربوية (6): الذهب، الفضة، البر، الشعير، التمر، الملح",
+      "الدليل: 'وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا' (البقرة: 275)"
+    ]
+  },
+  {
+    id: 8,
+    name: "🍽️ الأطعمة",
+    icon: "🍽️",
+    details: [
+      "الحلال: الأنعام (الإبل، البقر، الغنم)، الطيور (الدجاج، الحمام)، الأسماك، النباتات والثمار، المشروبات غير المسكرة",
+      "الحرام: الميتة، الدم، لحم الخنزير، ما أهل لغير الله به، كل ذي ناب من السباع، كل ذي مخلب من الطير، الخمر والمسكرات",
+      "شروط الذبح: أن يكون الذابح مسلماً أو كتابياً، عاقلاً، مميزاً، وأن يذكر اسم الله عليه، وأن يذبح بحادة تقطع الحلقوم والمرئ والودجين",
+      "الدليل: 'حُرِّمَتْ عَلَيْكُمُ الْمَيْتَةُ وَالدَّمُ وَلَحْمُ الْخِنزِيرِ...' (المائدة: 3)"
+    ]
+  }
+];
+وفي RulingsScreen.jsx:
+javascript
+import { rulingsData } from '../data/rulingsData';
+
+// داخل المكون
+{rulingsData.map(ruling => (
+  <div key={ruling.id} className="bg-card rounded-xl mb-3">
+    <button onClick={() => setSelected(selected === ruling.id ? null : ruling.id)} 
+            className="w-full p-4 text-right flex justify-between">
+      <span className="text-white font-bold">{ruling.icon} {ruling.name}</span>
+      <span className="text-gold">{selected === ruling.id ? '▲' : '▼'}</span>
+    </button>
+    {selected === ruling.id && (
+      <div className="px-4 pb-4 space-y-2">
+        {ruling.details.map((detail, i) => (
+          <p key={i} className="text-gray-300 text-sm border-t border-gray-700 pt-2">• {detail}</p>
+        ))}
+      </div>
+    )}
+  </div>
+))}
+✅ قائمة التحقق النهائية للإضافات:
+القرآن كامل (114 سورة، 6236 آية) مع روايتي حفص وورش
+
+أسماء السور بالعربية (بدلاً من الإنجليزية)
+
+الأحاديث 20 كتاباً مع معالجة صيغ JSON
+
+الأصوات (أذان + تنبيه) باستخدام TTS
+
+الأحكام الشرعية مفصلة (8 أبواب مع تفاصيل وأدلة)
+
+جميع البيانات تُخزن في localStorage للعمل دون إنترنت
+
+شاشة تحميل واحدة تجلب كل البيانات أول مرة
+
+🚀 بعد إضافة هذه التعديلات:
+bash
+npm run build
+npx serve build

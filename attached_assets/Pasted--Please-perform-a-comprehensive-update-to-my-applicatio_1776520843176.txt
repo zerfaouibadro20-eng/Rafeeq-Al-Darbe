@@ -1,0 +1,35 @@
+"Please perform a comprehensive update to my application with the following technical requirements. Ensure all previous missing features are fully implemented this time:
+
+1. Global UI Fixes:
+
+Bottom Navigation Bar: Fix the alignment of the bottom nav bar. It must be perfectly centered. Ensure the active icon has the gold highlight circle correctly positioned underneath it, matching the style in the uploaded images.
+
+Theme: Maintain the dark/gold/premium card aesthetic across all new screens.
+
+2. Complete Quran System (Hafs & Warsh):
+
+Structure: When clicking 'القرآن', first show a Surah Selection Screen with a search bar and a grid of all 114 Surahs.
+
+Full-Page Viewer: Upon selecting a Surah, open a Full-Page (Mushaf) Viewer. Do NOT use plain text. Use high-quality page images (PNG/SVG) from a reliable Quran API (like Quran.com or GlobalQuran).
+
+Narrations (Qira'at): Add a toggle to switch between 'Hafs an Asim' and 'Warsh an Nafi'. Switching must reload the correct page images for each narration.
+
+Layout: Use a traditional Islamic golden border around the page, simulating a physical book. Navigation must be via swipe or side arrows to flip through all 604 pages.
+
+3. Hadith Library:
+
+Integrate a dedicated 'Library' section containing the full text of: Sahih al-Bukhari, Sahih Muslim, Jami` at-Tirmidhi, and Al-Nawawi's Forty Hadith.
+
+Use a hierarchical menu (Book > Chapter > Hadith) for easy browsing.
+
+4. Advanced Athan & Sound System:
+
+Prayer Times: Ensure 'مواقيت الصلاة' works based on the user's location.
+
+Athan Audio: Implement an audio notification system. In the settings, provide a choice between two voices for the Athan: 'Salem Al-Dossari' and 'Maher Al-Muaiqly'.
+
+Trigger: The selected audio must play automatically at each prayer time (with browser permission).
+
+5. Missing Content Fix:
+
+If the Quran was not showing before, ensure you are using an external image-based API because rendering the full text manually is causing failures. Prioritize loading speed and image clarity."**

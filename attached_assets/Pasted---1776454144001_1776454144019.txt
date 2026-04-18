@@ -1,0 +1,487 @@
+
+📋 البرومت العملاق النهائي - تطبيق "رفيق الدرب"
+🎯 قبل أن تبدأ، إليك ملخص ما ستفعله:
+ستبني تطبيق PWA Offline-First يعمل بدون إنترنت بعد أول تحميل
+
+ستجلب القرآن كاملاً (6236 آية) بروايتي حفص وورش من APIs موثوقة
+
+ستجلب الأحاديث من 20 كتاباً (البخاري، مسلم، الترمذي، وغيرها)
+
+ستضيف تصحيحاً تجويدياً بالصوت مع 7 أحكام للتجويد ونافذة حمراء عند الخطأ
+
+ستضيف ختم RSVP مع تتبع العين بالكاميرا (يتوقف التدفق عندما يبتعد المستخدم)
+
+ستضيف صفحة تلاوة فارغة يختار المستخدم السورة ويتلو، ويظهر النص المتلو مع التصحيح
+
+ستضيف أحكاماً شرعية مفصلة (8 أبواب مع تفاصيل وأدلة)
+
+ستضيف مسبحة إلكترونية (33 خرزة قابلة للسحب أو الضغط)
+
+ستضيف مواقيت صلاة وبوصلة قبلة مع أذان TTS (نص إلى صوت)
+
+ستستخدم الألوان الذهبي (#D4AF37) والأسود (#121212)
+
+ستستخدم صورة أيقونة خارجية سأرسلها لك باسم icon.png
+
+ستجعل التطبيق يعمل 100% بدون إنترنت بعد التحميل الأول
+
+📋 البرومت العملاق النهائي (أرسله للـ Agent)
+markdown
+# برومت تطبيق "رفيق الدرب" - النسخة العملاقة النهائية
+
+## 🎯 اسم التطبيق
+**رفيق الدرب (Rafeeq Al-Darb)**
+
+## 👨‍💻 المطور
+**بدر الدين زرفاوي (Badr Eddine Zerfaoui)**
+
+---
+
+## ⚠️ أهم تنبيهات هذا البرومت:
+
+1. **التطبيق PWA Offline-First** - يحتاج إنترنت فقط في أول مرة لتحميل البيانات
+2. **جميع البيانات تُجلب من APIs موثوقة** - لا تعتمد على المستخدم في رفع الملفات
+3. **سأرسل لك صورة أيقونة خارجية باسم `icon.png`** - استخدمها كأيقونة التطبيق
+4. **القرآن كامل (حفص + ورش) - 6236 آية** مع جميع الآيات
+5. **الأحاديث 20 كتاباً كاملة** - من APIs
+6. **RSVP مع تتبع العين بالكاميرا** - يتوقف عند إبعاد الوجه
+7. **صفحة تلاوة فارغة** - يختار السورة ويتلو، ويظهر النص المتلو مع التصحيح
+8. **الألوان: ذهبي #D4AF37، خلفية #121212**
+
+---
+
+## 📦 APIs ومصادر البيانات (استخدمها كما هي):
+
+### 1. القرآن الكريم:
+رواية حفص (كاملة مع الآيات)
+https://raw.githubusercontent.com/risan/quran-json/main/data/quran.json
+
+رواية ورش (كاملة مع الآيات)
+https://raw.githubusercontent.com/risan/quran-json/main/data/quran-warsh.json
+
+text
+
+### 2. الأحاديث (20 كتاباً):
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/bukhari.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/muslim.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/tirmidhi.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/abudawud.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/nasai.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/ibnmajah.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/malik.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/ahmad.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/darimi.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/ibnhban.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/ibnhuzaimah.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/hakim.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/nawawi.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/riyadh.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/mishkat.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/bulugh.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/umdah.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/saeed.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/abdulrazzaq.json
+https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/ibnabishaybah.json
+
+text
+
+### 3. ملفات MP3 (سيتم استخدام TTS بدلاً منها لتجنب CORS)
+لن نحتاج إلى روابط MP3 خارجية، سنستخدم `SpeechSynthesis` (TTS) للأذان والتنبيهات.
+
+---
+
+## 🖼️ أيقونة التطبيق (سأرسلها لك)
+
+سأرسل لك صورة باسم **`icon.png`** . قم بوضعها في المجلد `public/icons/` واستخدمها في `manifest.json`:
+
+```json
+{
+  "name": "رفيق الدرب",
+  "short_name": "رفيق الدرب",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#D4AF37",
+  "icons": [
+    { "src": "/icons/icon.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
+وفي index.html:
+
+html
+<link rel="apple-touch-icon" href="/icons/icon.png" />
+<link rel="icon" type="image/png" href="/icons/icon.png" />
+🚀 آلية العمل (شاشة تحميل واحدة فقط)
+أولاً: شاشة التحميل (LoadingScreen.jsx)
+javascript
+import React, { useEffect, useState } from 'react';
+
+const LoadingScreen = ({ onComplete }) => {
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState('');
+
+  useEffect(() => {
+    // التحقق من صحة البيانات الموجودة
+    const isValidData = () => {
+      const hafs = localStorage.getItem('quran_hafs');
+      if (!hafs) return false;
+      try {
+        const parsed = JSON.parse(hafs);
+        return parsed && parsed.length === 114 && parsed[0]?.verses?.length > 0;
+      } catch { return false; }
+    };
+
+    if (isValidData()) {
+      onComplete();
+      return;
+    }
+    loadAllData();
+  }, []);
+
+  const loadQuranData = async (recitation, url) => {
+    try {
+      const res = await fetch(url);
+      let data = await res.json();
+      if (data && !Array.isArray(data) && data.data) data = data.data;
+      if (data && Array.isArray(data) && data.length === 114) {
+        localStorage.setItem(`quran_${recitation}`, JSON.stringify(data));
+        return true;
+      }
+      return false;
+    } catch (e) { return false; }
+  };
+
+  const loadHadithBook = async (id, name) => {
+    try {
+      const res = await fetch(`https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/${id}.json`);
+      const data = await res.json();
+      localStorage.setItem(`hadith_${id}`, JSON.stringify(data));
+      return true;
+    } catch (e) { return false; }
+  };
+
+  const loadAllData = async () => {
+    setStatus('جاري تحميل القرآن - رواية حفص...');
+    await loadQuranData('hafs', 'https://raw.githubusercontent.com/risan/quran-json/main/data/quran.json');
+    setProgress(15);
+
+    setStatus('جاري تحميل القرآن - رواية ورش...');
+    await loadQuranData('warsh', 'https://raw.githubusercontent.com/risan/quran-json/main/data/quran-warsh.json');
+    setProgress(30);
+
+    const books = ['bukhari','muslim','tirmidhi','abudawud','nasai','ibnmajah','malik','ahmad','nawawi','riyadh'];
+    for (let i = 0; i < books.length; i++) {
+      setStatus(`جاري تحميل كتاب الحديث ${i+1}/${books.length}...`);
+      await loadHadithBook(books[i], '');
+      setProgress(30 + (i+1) * 5);
+    }
+
+    setProgress(100);
+    setStatus('تم التحميل بنجاح!');
+    setTimeout(onComplete, 1500);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+      <h1 className="text-5xl font-bold text-gold mb-4">رفيق الدرب</h1>
+      <div className="w-64 h-2 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-full bg-gold transition-all duration-300" style={{ width: `${progress}%` }} />
+      </div>
+      <p className="text-white mt-4">{status}</p>
+      <p className="text-gray-500 text-sm mt-4">يحتاج إنترنت لأول مرة فقط</p>
+    </div>
+  );
+};
+
+export default LoadingScreen;
+📖 ثانياً: القرآن الكريم (114 سورة بأسماء عربية)
+قائمة أسماء السور العربية (استخدمها لتجاوز مشكلة الأسماء الإنجليزية):
+javascript
+// utils/surahNames.js
+export const ARABIC_SURAH_NAMES = [
+  "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
+  "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
+  "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
+  "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+  "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
+  "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
+  "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
+  "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
+  "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
+  "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
+  "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
+  "المسد", "الإخلاص", "الفلق", "الناس"
+];
+في QuranScreen.jsx:
+javascript
+import { ARABIC_SURAH_NAMES } from '../utils/surahNames';
+
+const loadSurahs = () => {
+  const data = localStorage.getItem(`quran_${recitation}`);
+  if (data) {
+    let parsed = JSON.parse(data);
+    if (Array.isArray(parsed) && parsed.length === 114) {
+      // إضافة الأسماء العربية
+      parsed = parsed.map((surah, idx) => ({
+        ...surah,
+        name: ARABIC_SURAH_NAMES[idx] || surah.name
+      }));
+      setSurahs(parsed);
+    }
+  }
+};
+🎙️ ثالثاً: صفحة التلاوة (فارغة + تصحيح تجويدي)
+الميزات:
+اختيار السورة من قائمة منسدلة
+
+عرض الآية الحالية بخط كبير
+
+زر تسجيل 🎙️ (SpeechRecognition)
+
+عرض النص المتلو
+
+عند الخطأ: نافذة حمراء + اهتزاز + نطق التصحيح + تحليل حكم التجويد
+
+الكود الأساسي:
+javascript
+// TajweedScreen.jsx (جزء من الكود)
+const startListening = () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'ar-SA';
+  recognition.onresult = (event) => {
+    const spoken = event.results[0][0].transcript;
+    setRecognizedText(spoken);
+    const expected = selectedSurah.verses[currentAyah]?.text;
+    if (spoken !== expected) {
+      if (navigator.vibrate) navigator.vibrate(500);
+      let errorMsg = 'خطأ في التلاوة';
+      if (expected.includes('مَنْ آمَنَ') && !spoken.includes('مَنْ آمَنَ'))
+        errorMsg = '⚠️ خطأ في الإظهار: يجب إظهار النون الساكنة قبل الهمزة';
+      else if (expected.includes('مِن رَّبِّ') && !spoken.includes('مِن رَّبِّ'))
+        errorMsg = '⚠️ خطأ في الإدغام: يجب إدغام النون الساكنة في الراء';
+      setCorrection({ spoken, expected, errorMsg });
+      new SpeechSynthesisUtterance(expected).speak();
+    } else {
+      alert('✅ أحسنت!');
+      nextAyah();
+    }
+  };
+  recognition.start();
+};
+👁️ رابعاً: RSVP مع تتبع العين بالكاميرا
+الميزات:
+كاميرا تتبع العين (FaceDetector API)
+
+عند ابتعاد العين → يتوقف التدفق
+
+عند العودة → يستأنف
+
+شريط سرعة (100-800 كلمة/دقيقة)
+
+حفظ التقدم تلقائياً
+
+الكود الأساسي:
+javascript
+// RSVPScreen.jsx
+useEffect(() => {
+  startCamera();
+}, []);
+
+const startCamera = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+  videoRef.current.srcObject = stream;
+  const faceDetector = new FaceDetector();
+  setInterval(async () => {
+    const faces = await faceDetector.detect(videoRef.current);
+    const isLooking = faces.length > 0 && faces[0].boundingBox.width > 100;
+    setIsLooking(isLooking);
+    if (!isLooking && isActive) pauseRSVP();
+    else if (isLooking && !isActive && !pausedByUser) resumeRSVP();
+  }, 500);
+};
+📚 خامساً: الأحاديث (20 كتاباً)
+في HadithScreen.jsx، تأكد من معالجة صيغ JSON المختلفة:
+javascript
+const loadBook = async (bookId, bookName) => {
+  setLoading(true);
+  let data = localStorage.getItem(`hadith_${bookId}`);
+  if (!data) {
+    const res = await fetch(`https://raw.githubusercontent.com/saandsoft/hadith-json/main/db/${bookId}.json`);
+    data = await res.json();
+    localStorage.setItem(`hadith_${bookId}`, JSON.stringify(data));
+  } else {
+    data = JSON.parse(data);
+  }
+  let hadithsList = data.hadiths || (Array.isArray(data) ? data : []);
+  setHadiths(hadithsList);
+  setSelectedBook(bookName);
+  setLoading(false);
+};
+⚖️ سادساً: الأحكام الشرعية (8 أبواب مفصلة)
+يجب أن يحتوي كل باب على تفاصيل كاملة (كما هو مطلوب سابقاً). إليك نموذج للباب الأول:
+javascript
+const rulingsData = [
+  {
+    id: 1, name: '🧼 الطهارة', icon: '🧼',
+    details: [
+      'الوضوء: 4 فرائض (غسل الوجه، اليدين، مسح الرأس، غسل الرجلين)',
+      'الوضوء: 4 سنن (التسمية، المضمضة، الاستنشاق، تخليل الأصابع)',
+      'الوضوء: 4 نواقض (الخارج من السبيلين، النوم، مس الذكر، أكل لحم الإبل)',
+      'الغسل: 4 أسباب (الجنابة، الحيض، النفاس، الإسلام)',
+      'الغسل: 2 فرائض (النية، تعميم البدن)',
+      'التيمم: 3 أسباب (عدم وجود الماء، المرض، البرد الشديد)'
+    ]
+  },
+  // باقي الأبواب...
+];
+📿 سابعاً: المسبحة الإلكترونية (33 خرزة)
+الميزات:
+33 خرزة تفاعلية
+
+5 أذكار (سبحان الله، الحمد لله، الله أكبر، لا إله إلا الله، أستغفر الله)
+
+عدادات منفصلة
+
+حفظ تلقائي
+
+اهتزاز عند الضغط
+
+الكود الأساسي:
+javascript
+const increment = () => {
+  const newCount = counts[selectedDhikr] + 1;
+  const newCounts = { ...counts, [selectedDhikr]: newCount };
+  setCounts(newCounts);
+  localStorage.setItem('tasbeeh_counts', JSON.stringify(newCounts));
+  if (navigator.vibrate) navigator.vibrate(50);
+  if (newCount === 33) alert('✅ مبارك! أتممت التسبيح');
+};
+🕌 ثامناً: مواقيت الصلاة والقبلة (بدون MP3 - باستخدام TTS)
+الأذان باستخدام TTS:
+javascript
+const playAdhan = () => {
+  if (!adhanEnabled) return;
+  const adhanText = "الله أكبر الله أكبر، أشهد أن لا إله إلا الله، أشهد أن محمداً رسول الله، حي على الصلاة، حي على الفلاح، الله أكبر الله أكبر، لا إله إلا الله";
+  const utterance = new SpeechSynthesisUtterance(adhanText);
+  utterance.lang = 'ar-SA';
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+};
+بوصلة القبلة:
+javascript
+const getQibla = (lat, lng) => {
+  // معادلة حساب زاوية القبلة من مكة
+  const meccaLat = 21.4225, meccaLng = 39.8262;
+  const φ1 = lat * Math.PI/180, φ2 = meccaLat * Math.PI/180;
+  const Δλ = (meccaLng - lng) * Math.PI/180;
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1)*Math.sin(φ2) - Math.sin(φ1)*Math.cos(φ2)*Math.cos(Δλ);
+  let θ = Math.atan2(y, x);
+  return (θ * 180/Math.PI + 360) % 360;
+};
+🧭 تاسعاً: شريط التنقل السفلي (10 أقسام)
+text
+🏠 الرئيسية | 📖 القرآن | 🎙️ التلاوة | ⚡ الختم | 📚 الأحاديث | 📖✨ التجويد | ⚖️ الأحكام | 🕌 الصلاة | 🧭 القبلة | 📿 التسبيح
+🎨 عاشراً: الألوان والتنسيق (tailwind.config.js)
+javascript
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        gold: '#D4AF37',
+        background: '#121212',
+        card: '#1E1E1E',
+      },
+    },
+  },
+  plugins: [],
+};
+وفي index.css:
+
+css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #121212;
+  color: #ffffff;
+}
+.bg-gold { background-color: #D4AF37; }
+.text-gold { color: #D4AF37; }
+.bg-card { background-color: #1E1E1E; }
+👨‍💻 الحادية عشر: لمسة المطور
+في أسفل كل صفحة:
+
+jsx
+<div className="mt-8 pt-4 text-center border-t border-gray-800">
+  <p className="text-gold text-sm">المطور البسيط - بدر الدين زرفاوي</p>
+  <p className="text-gray-500 text-xs">The Simple Developer - Badr Eddine Zerfaoui</p>
+</div>
+✅ قائمة التحقق النهائية (يجب أن تتأكد من وجودها):
+شاشة تحميل واحدة تظهر مرة واحدة فقط وتجلب كل البيانات
+
+القرآن كامل 114 سورة (حفص وورش) مع الآيات
+
+أسماء السور بالعربية (استخدم القائمة المدمجة)
+
+الأحاديث 20 كتاباً مع معالجة صيغ JSON المختلفة
+
+صفحة تلاوة فارغة مع اختيار السورة وتسجيل صوتي وتصحيح تجويدي
+
+نافذة حمراء عند الخطأ + اهتزاز + نطق التصحيح
+
+RSVP مع كاميرا تتبع العين (توقف التدفق عند الابتعاد)
+
+مسبحة 33 خرزة مع عدادات وحفظ تلقائي
+
+مواقيت صلاة مع أذان TTS (نص إلى صوت)
+
+بوصلة قبلة تعمل بحساسات الجهاز
+
+أحكام شرعية مفصلة (8 أبواب مع تفاصيل)
+
+أيقونة خارجية (icon.png) سأرسلها لك
+
+يعمل 100% بدون إنترنت بعد التحميل الأول
+
+ألوان ذهبية وداكنة (#D4AF37 و #121212)
+
+🚀 بناء وتشغيل التطبيق:
+bash
+npm install
+npm run build
+npx serve build
+ثم افتح الرابط المعطى على هاتفك، ويمكنك تثبيت التطبيق على الشاشة الرئيسية.
+
+⚠️ تذكير أخير:
+سأرسل لك صورة icon.png . ضعها في مجلد public/icons/ قبل بناء التطبيق.
+
+لا تستخدم أي ملفات MP3 خارجية - استخدم TTS للأذان والتنبيهات لتجنب مشاكل CORS.
+
+تأكد من أن جميع البيانات تُجلب من APIs مرة واحدة وتُخزن في localStorage ليعمل التطبيق بدون إنترنت بعد ذلك.
+
+بالتوفيق! 🎯
+
+text
+
+---
+
+## ✅ الخلاصة (ما سيفعله الـ Agent بالضبط):
+
+| الخطوة | الوصف |
+|--------|-------|
+| 1 | بناء هيكل المشروع (React + Tailwind + PWA) |
+| 2 | إنشاء شاشة تحميل تجلب القرآن والأحاديث من APIs |
+| 3 | إنشاء 10 صفحات (رئيسية، قرآن، تلاوة، ختم، أحاديث، تجويد، أحكام، صلاة، قبلة، تسبيح) |
+| 4 | إضافة شريط تنقل سفلي |
+| 5 | تطبيق الألوان الذهبية والداكنة |
+| 6 | إضافة كاميرا تتبع العين لـ RSVP |
+| 7 | إضافة ميكروفون وتصحيح تجويدي |
+| 8 | إضافة المسبحة والعدادات |
+| 9 | إضافة مواقيت الصلاة وبوصلة القبلة (مع TTS) |
+| 10 | إضافة أيقونة خارجية `icon.png` |
+
+**الآن أرسل هذا البرومت إلى الـ Agent، وسيبني لك التطبيق كاملاً.** 🚀
